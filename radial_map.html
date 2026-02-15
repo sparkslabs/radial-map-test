@@ -52,7 +52,7 @@
     height: min(90vh, 900px);
     width: auto;
     margin: 20px auto;
-  /* border: 1px solid #444; */ /* For handy debugging... */
+    border: 1px solid #444;  /* For handy debugging... */
     background:
       radial-gradient(circle at 30% 25%, rgba(255,255,255,0.9), #ffffff 60%);
   }
@@ -112,8 +112,7 @@
   }
 }
 
-/* expanded / focus mode */
-/* focus mode */
+/* expanded / zoom mode */
 body.map-expanded #layout {
   grid-template-columns: 1fr;
 }
@@ -133,7 +132,7 @@ body.map-expanded #container {
   margin-left: calc(50% - 50vw);   /* escape parent width */
 }
 
-/* remove height constraint */
+/* remove height constraint when zooming */
 body.map-expanded #container svg {
   height: auto;
   width: 100%;
@@ -172,9 +171,6 @@ svg:hover .hint-label {
   </aside>
 </div>
 
-
-<!-- <div id="container"></div> -->
-
 <script type="module">
 
 //
@@ -197,19 +193,6 @@ const segment_labels = [ "Compatibility", "FAIRness",
                          "Performance Efficiency", "Reliability",
                          "Safety", "Security",
                          "Sustainability" ]
-
-
-
-const _ITEMS = [
-  { id:"a1", label:"Apple" },
-  { id:"c3", label:"Banana" },
-  { id:"d2", label:"Cat" },
-  { id:"f1", label:"Dog" },
-  { id:"b2", label:"Elephant" },
-  { id:"e3", label:"Fox" },
-  { id:"a3", label:"Grape" },
-  { id:"c1", label:"Horse" }
-];
 
 const ITEMS = [
   { id:"a1", label:"resqui", href:"https://everse.software/TechRadar/compatibility/resqui_Compatibility/"},
@@ -335,7 +318,6 @@ const ITEMS = [
   { id:"k3", label:"Hermes Workflows", href:"https://everse.software/TechRadar/sustainability/hermes_workflows_Sustainability/"}
 ];
 
-
 const W = 1000;
 const H = 900;
 
@@ -348,7 +330,6 @@ const CONFIG = {
 const padding = 40;
 const radius = Math.min(W,H)/2 - padding;
 CONFIG.radius = radius;
-
 
 export const hooks = {
   onSegment: (segment)=>{},
@@ -515,24 +496,6 @@ function drawSegmentLabels(svg, labels) {
     const angle = ((s + 0.5)/segments)*2*Math.PI - Math.PI/2;
     const p = polar(cx, cy, labelRadius, angle);
 
-    // svg.append(
-    //   // el("text",{
-    //   //   x:p.x,
-    //   //   y:p.y,
-    //   //   "text-anchor":"middle",
-    //   //   "dominant-baseline":"middle",
-    //   //   class:"segment-label"
-    //   // },[labels[s]])
-    //   el("text",{
-    //     x:p.x,
-    //     y:p.y,
-    //     "text-anchor":"middle",
-    //     "dominant-baseline":"middle",
-    //     class:"segment-label",
-    //     "data-segment": labels[s]
-    //   },[labels[s]])
-    // );
-
     const href = `#segment-${encodeURIComponent(labels[s])}`;
 
     svg.append(
@@ -604,49 +567,10 @@ function placeInCell(cellId, item) {
   return null; // cell full
 }
 
-// function addItem({id,label}) {
-//   if (!cellGeometry[id]) return;
-// 
-//   const p = placeInCell(id,{id,label});
-//   if (!p) return;
-// 
-//   svg.append(
-//     el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"}),
-//     el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label])
-//   );
-// }
-
 function itemHref(item) {
   // placeholder canonical URL
   return `/item/${encodeURIComponent(item.label.toLowerCase().replace(/\s+/g,'-'))}.html`;
 }
-
-
-// function addItem(item) {
-//   const {id,label} = item;
-//   if (!cellGeometry[id]) return;
-// 
-//   const p = placeInCell(id,item);
-//   if (!p) return;
-// 
-//   const segIndex = letters.indexOf(id[0]);
-//   const ringIndex = Number(id.slice(1))-1;
-// 
-//   const group = el("g",{
-//     class:"item",
-//     "data-segment": segment_labels[segIndex],
-//     "data-ring": ring_labels[ringIndex]
-//   });
-// 
-//   group.__data = item;
-// 
-//   group.append(
-//     el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"}),
-//     el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label])
-//   );
-// 
-//   svg.append(group);
-// }
 
 function addItem(item) {
   const {id,label} = item;
@@ -775,28 +699,8 @@ for (let s=0; s<CONFIG.segments; s++) {
 
       createChunkGradient(defs, s, r, hue, sThis, sNext, r0, r1, reverseForVisibility);
 
-      // board.append(
-      //   el("path", {
-      //     d: path,
-      //     class: "cell",
-      //     id,
-      //     fill: `url(#chunkGrad-${s}-${r})`
-      //   })
-      // );
-
       const segmentLabel = segment_labels[s];
       const ringLabel = ring_labels[r];
-
-      // board.append(
-      //   el("path", {
-      //     d: path,
-      //     class: "cell",
-      //     id,
-      //     fill: `url(#chunkGrad-${s}-${r})`,
-      //     "data-segment": segmentLabel,
-      //     "data-ring": ringLabel
-      //   })
-      // );
 
       const chunkHref =
         `#chunk-${encodeURIComponent(segmentLabel)}-${encodeURIComponent(ringLabel)}`;
@@ -846,68 +750,6 @@ drawRingLabels(svg, ring_labels);
 drawSegmentLabels(svg, segment_labels);
 
 ITEMS.forEach(addItem);
-
-// svg.addEventListener("click", (ev) => {
-// 
-//   const rect = svg.getBoundingClientRect();
-// 
-//   // mouse position in SVG coordinates
-//   const x = (ev.clientX - rect.left) * (W / rect.width);
-//   const y = (ev.clientY - rect.top)  * (H / rect.height);
-// 
-//   const dx = x - cx;
-//   const dy = y - cy;
-//   const dist = Math.sqrt(dx*dx + dy*dy);
-// 
-//   const clickedOutsideCircle = dist > CONFIG.radius;
-// 
-//   if (clickedOutsideCircle) {
-//     document.body.classList.toggle("map-expanded");
-//   }
-// });
-
-// svg.addEventListener("click", (ev) => {
-// 
-//   // --- ITEM ---
-//   const item = ev.target.closest(".item");
-//   if (item) {
-//     hooks.onItem(
-//       item.dataset.segment,
-//       item.dataset.ring,
-//       item.__data
-//     );
-//     return;
-//   }
-// 
-//   // --- CHUNK ---
-//   const chunk = ev.target.closest(".cell");
-//   if (chunk) {
-//     hooks.onChunk(
-//       chunk.dataset.segment,
-//       chunk.dataset.ring
-//     );
-//     return;
-//   }
-// 
-//   // --- SEGMENT LABEL ---
-//   const seg = ev.target.closest(".segment-label");
-//   if (seg) {
-//     hooks.onSegment(seg.dataset.segment);
-//     return;
-//   }
-// 
-//   // --- OUTSIDE CIRCLE (zoom toggle) ---
-//   const rect = svg.getBoundingClientRect();
-//   const x = (ev.clientX - rect.left) * (W / rect.width);
-//   const y = (ev.clientY - rect.top)  * (H / rect.height);
-// 
-//   const dx = x - cx;
-//   const dy = y - cy;
-//   const dist = Math.sqrt(dx*dx + dy*dy);
-// 
-//   if (dist > CONFIG.radius)
-//     document.body.classList.toggle("map-expanded");
-// });
 
 svg.addEventListener("click", (ev) => {
 
@@ -962,10 +804,6 @@ window.addEventListener("keydown", e=>{
     updateHint();
   }
 });
-
-// hooks.onItem = (s,r,item)=>console.log("ITEM",s,r,item);
-// hooks.onChunk = (s,r)=>console.log("CHUNK",s,r);
-// hooks.onSegment = s=>console.log("SEGMENT",s);
 
 hooks.onItem = (s,r,item)=>{
   console.log("ITEM",s,r,item);
