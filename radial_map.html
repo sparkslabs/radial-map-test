@@ -176,6 +176,15 @@ svg:hover .hint-label {
 <!-- <div id="container"></div> -->
 
 <script type="module">
+
+//
+// This interface provides the follow 3 hooks to add behaviour to the code:
+//
+// hooks.onSegment(segmentLabel)
+// hooks.onChunk(segmentLabel, ringLabel)
+// hooks.onItem(segmentLabel, ringLabel, itemObject)
+// 
+
 /* =======================
    Configuration
 ======================= */
@@ -203,120 +212,127 @@ const _ITEMS = [
 ];
 
 const ITEMS = [
-  { id:"a1", label:"resqui" },
-  { id:"a3", label:"Docker" },
-  { id:"a3", label:"Apptainer" },
-  { id:"a3", label:"SingularityCE" },
-  { id:"a3", label:"CMAKE" },
-  { id:"b1", label:"resqui" },
-  { id:"b1", label:"SQAaas" },
-  { id:"b1", label:"eOSSR" },
-  { id:"b1", label:"Fair-Aware tool" },
-  { id:"b1", label:"Five Recommendations for FAIR Software" },
-  { id:"b2", label:"REUSE" },
-  { id:"b2", label:"Fair Python CookieCutter" },
-  { id:"b3", label:"zenodo" },
-  { id:"b3", label:"Hermes Workflows" },
-  { id:"b3", label:"howfairis" },
-  { id:"b3", label:"F-UJI" },
-  { id:"b3", label:"DVC" },
-  { id:"b3", label:"SOMEF" },
-  { id:"b3", label:"cffinit" },
-  { id:"b3", label:"CC-License Chooser" },
-  { id:"b3", label:"Somesy" },
-  { id:"b3", label:"CodeMeta Generator" },
-  { id:"c1", label:"resqui" },
-  { id:"c2", label:"pypi" },
-  { id:"c3", label:"SingularityCE" },
-  { id:"c3", label:"Nix" },
-  { id:"c3", label:"Docker" },
-  { id:"c3", label:"Apptainer" },
-  { id:"d1", label:"resqui" },
-  { id:"e1", label:"resqui" },
-  { id:"e2", label:"mkDocs" },
-  { id:"e3", label:"tox" },
-  { id:"e3", label:"Jupyter" },
-  { id:"f1", label:"resqui" },
-  { id:"f1", label:"Checkstyle" },
-  { id:"f1", label:"Hadolint" },
-  { id:"f1", label:"valgrind" },
-  { id:"f1", label:"pre-commit" },
-  { id:"f1", label:"gcov" },
-  { id:"f1", label:"ruff" },
-  { id:"f1", label:"Qlty" },
-  { id:"f1", label:"doxygen" },
-  { id:"f1", label:"pytest" },
-  { id:"f1", label:"flake8" },
-  { id:"f1", label:"pylint" },
-  { id:"f2", label:"poetry" },
-  { id:"f2", label:"black" },
-  { id:"f2", label:"pypi" },
-  { id:"f2", label:"CppUnit" },
-  { id:"f3", label:"sphinx" },
-  { id:"f3", label:"cmake" },
-  { id:"f3", label:"Hermes Workflows" },
-  { id:"f3", label:"Kubernetes" },
-  { id:"f3", label:"Jupyter" },
-  { id:"f3", label:"Jenkins" },
-  { id:"f3", label:"GNU Guix" },
-  { id:"f3", label:"tox" },
-  { id:"f3", label:"Travis CI" },
-  { id:"f3", label:"javadoc" },
-  { id:"f3", label:"Junit" },
-  { id:"f3", label:"SonarQube" },
-  { id:"f3", label:"Git" },
-  { id:"f3", label:"SCANOSS" },
-  { id:"f3", label:"Dependabot" },
-  { id:"g1", label:"resqui" },
-  { id:"g1", label:"valgrind" },
-  { id:"g1", label:"score-p" },
-  { id:"h1", label:"resqui" },
-  { id:"h1", label:"valgrind" },
-  { id:"h1", label:"pytest" },
-  { id:"h2", label:"CppUnit" },
-  { id:"h2", label:"Github Actions" },
-  { id:"h3", label:"JUnit" },
-  { id:"h3", label:"tox" },
-  { id:"h3", label:"Docker" },
-  { id:"h3", label:"GNU Guix" },
-  { id:"h3", label:"Gitlab CICD" },
-  { id:"h3", label:"Jenkins" },
-  { id:"h3", label:"SonarQube" },
-  { id:"h3", label:"Kubernetes" },
-  { id:"h3", label:"Apptainer" },
-  { id:"h3", label:"Travis CI" },
-  { id:"h3", label:"Nix" },
-  { id:"i1", label:"resqui" },
-  { id:"j1", label:"resqui" },
-  { id:"j1", label:"bandit" },
-  { id:"j1", label:"Gitleaks" },
-  { id:"j1", label:"Hadolint" },
-  { id:"j1", label:"bearer" },
-  { id:"j3", label:"SonarQube" },
-  { id:"j3", label:"SCANOSS" },
-  { id:"j3", label:"Nix" },
-  { id:"j3", label:"Dependabot" },
-  { id:"k1", label:"resqui" },
-  { id:"k1", label:"Github Copilot" },
-  { id:"k1", label:"Choose a License" },
-  { id:"k1", label:"pre-commit" },
-  { id:"k1", label:"Gitleaks" },
-  { id:"k1", label:"gcov" },
-  { id:"k1", label:"valgrind" },
-  { id:"k2", label:"Zenodo github Integration" },
-  { id:"k2", label:"Github Actions" },
-  { id:"k2", label:"poetry" },
-  { id:"k3", label:"GNU Guix" },
-  { id:"k3", label:"Docker" },
-  { id:"k3", label:"zenodo" },
-  { id:"k3", label:"javadoc" },
-  { id:"k3", label:"Gitlab CICD" },
-  { id:"k3", label:"DVC" },
-  { id:"k3", label:"Apptainer" },
-  { id:"k3", label:"tox" },
-  { id:"k3", label:"Software Heritage" },
-  { id:"k3", label:"Kubertnetes" },
-  { id:"k3", label:"Hermes Workflows" }
+  { id:"a1", label:"resqui", href:"https://everse.software/TechRadar/compatibility/resqui_Compatibility/"},
+  { id:"a3", label:"Docker", href:"http://everse.software/TechRadar/compatibility/docker_Compatibility/"},
+  { id:"a3", label:"Apptainer", href:"https://everse.software/TechRadar/compatibility/apptainer_Compatibility/" },
+  { id:"a3", label:"SingularityCE", href:"https://everse.software/TechRadar/compatibility/singularityce_Compatibility/"},
+  { id:"a3", label:"CMAKE", href:"https://everse.software/TechRadar/compatibility/cmake_Compatibility/"},
+
+  { id:"b1", label:"resqui", href:"https://everse.software/TechRadar/fairness/resqui_FAIRness/"},
+  { id:"b1", label:"SQAaas", href:"https://everse.software/TechRadar/fairness/sqaaas/"},
+  { id:"b1", label:"eOSSR", href:"https://everse.software/TechRadar/fairness/eossr/"},
+  { id:"b1", label:"Fair-Aware tool", href:"https://everse.software/TechRadar/fairness/fair-aware_tool/"},
+  { id:"b1", label:"Five Recommendations for FAIR Software", href:"https://everse.software/TechRadar/fairness/five_recommendations_for_fair_software/"},
+  { id:"b2", label:"REUSE", href:"https://everse.software/TechRadar/fairness/reuse/"},
+  { id:"b2", label:"Fair Python CookieCutter", href:"https://everse.software/TechRadar/fairness/fair_python_cookiecutter/"},
+  { id:"b3", label:"zenodo", href:"https://everse.software/TechRadar/fairness/zenodo_FAIRness/"},
+  { id:"b3", label:"Hermes Workflows", href:"https://everse.software/TechRadar/fairness/hermes_workflows_FAIRness/"},
+  { id:"b3", label:"howfairis", href:"https://everse.software/TechRadar/fairness/howfairis/"},
+  { id:"b3", label:"F-UJI", href:"https://everse.software/TechRadar/fairness/f-uji/"},
+  { id:"b3", label:"DVC", href:"https://everse.software/TechRadar/fairness/dvc_FAIRness/"},
+  { id:"b3", label:"SOMEF", href:"https://everse.software/TechRadar/fairness/somef/"},
+  { id:"b3", label:"cffinit", href:"https://everse.software/TechRadar/fairness/cffinit/"},
+  { id:"b3", label:"CC-License Chooser", href:"https://everse.software/TechRadar/fairness/creative_commons_license_chooser/"},
+  { id:"b3", label:"Somesy", href:"https://everse.software/TechRadar/fairness/somesy/"},
+  { id:"b3", label:"CodeMeta Generator", href:"https://everse.software/TechRadar/fairness/codemeta_generator/"},
+  { id:"c1", label:"resqui", href:"https://everse.software/TechRadar/flexibility/resqui_Flexibility/"},
+  { id:"c2", label:"pypi", href:"https://everse.software/TechRadar/flexibility/pypi_Flexibility/"},
+  { id:"c3", label:"SingularityCE", href:"https://everse.software/TechRadar/flexibility/singularityce_Flexibility/"},
+  { id:"c3", label:"Nix", href:"https://everse.software/TechRadar/flexibility/nix_Flexibility/"},
+  { id:"c3", label:"Docker", href:"https://everse.software/TechRadar/flexibility/docker_Flexibility/"},
+  { id:"c3", label:"Apptainer", href:"https://everse.software/TechRadar/flexibility/apptainer_Flexibility/"},
+
+  { id:"d1", label:"resqui", href:"https://everse.software/TechRadar/functional_suitability/resqui_Functional_Suitability/"},
+  { id:"e1", label:"resqui", href:"https://everse.software/TechRadar/interaction_capability/resqui_Interaction_Capability/"},
+  { id:"e2", label:"mkDocs", href:"https://everse.software/TechRadar/interaction_capability/mkdocs_Interaction_Capability/"},
+  { id:"e3", label:"tox", href:"https://everse.software/TechRadar/interaction_capability/tox_Interaction_Capability/"},
+  { id:"e3", label:"Jupyter", href:"https://everse.software/TechRadar/interaction_capability/jupyter_Interaction_Capability/"},
+  { id:"f1", label:"resqui", href:"https://everse.software/TechRadar/maintainability/resqui_Maintainability/"},
+  { id:"f1", label:"Checkstyle", href:"https://everse.software/TechRadar/maintainability/checkstyle/"},
+  { id:"f1", label:"Hadolint", href:"https://everse.software/TechRadar/maintainability/hadolint_Maintainability/"},
+  { id:"f1", label:"valgrind", href:"https://everse.software/TechRadar/maintainability/valgrind_Maintainability/"},
+  { id:"f1", label:"pre-commit", href:"https://everse.software/TechRadar/maintainability/pre-commit_Maintainability/"},
+  { id:"f1", label:"gcov", href:"https://everse.software/TechRadar/maintainability/gcov_Maintainability/"},
+  { id:"f1", label:"ruff", href:"https://everse.software/TechRadar/maintainability/ruff/"},
+  { id:"f1", label:"Qlty", href:"https://everse.software/TechRadar/maintainability/qlty/"},
+  { id:"f1", label:"doxygen", href:"https://everse.software/TechRadar/maintainability/doxygen/"},
+  { id:"f1", label:"pytest", href:"https://everse.software/TechRadar/maintainability/pytest_Maintainability/"},
+  { id:"f1", label:"flake8", href:"https://everse.software/TechRadar/maintainability/flake8/"},
+  { id:"f1", label:"pylint", href:"https://everse.software/TechRadar/maintainability/pylint/"},
+  { id:"f2", label:"poetry", href:"https://everse.software/TechRadar/maintainability/poetry_Maintainability/"},
+  { id:"f2", label:"black", href:"https://everse.software/TechRadar/maintainability/black/"},
+  { id:"f2", label:"pypi", href:"https://everse.software/TechRadar/maintainability/pypi_Maintainability/"},
+  { id:"f2", label:"CppUnit", href:"https://everse.software/TechRadar/maintainability/cppunit_Maintainability/"},
+  { id:"f2", label:"mkDocs", href:"https://everse.software/TechRadar/maintainability/mkdocs_Maintainability/"},
+  { id:"f3", label:"sphinx", href:"https://everse.software/TechRadar/maintainability/sphinx/"},
+  { id:"f3", label:"cmake", href:"https://everse.software/TechRadar/maintainability/cmake_Maintainability/"},
+  { id:"f3", label:"Hermes Workflows", href:"https://everse.software/TechRadar/maintainability/hermes_workflows_Maintainability/"},
+  { id:"f3", label:"Kubernetes", href:"https://everse.software/TechRadar/maintainability/kubernetes_Maintainability/"},
+  { id:"f3", label:"Jupyter", href:"https://everse.software/TechRadar/maintainability/jupyter_Maintainability/"},
+  { id:"f3", label:"Jenkins", href:"https://everse.software/TechRadar/maintainability/jenkins_Maintainability/"},
+  { id:"f3", label:"GNU Guix", href:"https://everse.software/TechRadar/maintainability/gnu_guix_Maintainability/"},
+  { id:"f3", label:"tox", href:"https://everse.software/TechRadar/maintainability/tox_Maintainability/"},
+  { id:"f3", label:"Travis CI", href:"https://everse.software/TechRadar/maintainability/travis_ci_Maintainability/"},
+  { id:"f3", label:"javadoc", href:"https://everse.software/TechRadar/maintainability/javadoc_Maintainability/"},
+  { id:"f3", label:"Junit", href:"https://everse.software/TechRadar/maintainability/junit_Maintainability/"},
+  { id:"f3", label:"SonarQube", href:"https://everse.software/TechRadar/maintainability/sonarqube_Maintainability/"},
+  { id:"f3", label:"Git", href:"https://everse.software/TechRadar/maintainability/git/"},
+  { id:"f3", label:"SCANOSS", href:"https://everse.software/TechRadar/maintainability/scanoss_Maintainability/"},
+  { id:"f3", label:"Dependabot", href:"https://everse.software/TechRadar/maintainability/dependabot_Maintainability/"},
+  { id:"g1", label:"resqui", href:"https://everse.software/TechRadar/performance_efficiency/resqui_Performance_Efficiency/"},
+  { id:"g1", label:"valgrind", href:"https://everse.software/TechRadar/performance_efficiency/valgrind_Performance_Efficiency/"},
+  { id:"g1", label:"score-p", href:"https://everse.software/TechRadar/performance_efficiency/score-p/"},
+
+  { id:"h1", label:"resqui", href:"https://everse.software/TechRadar/reliability/resqui_Reliability/"},
+  { id:"h1", label:"valgrind", href:"https://everse.software/TechRadar/reliability/valgrind_Reliability/"},
+  { id:"h1", label:"pytest", href:"https://everse.software/TechRadar/reliability/pytest_Reliability/"},
+  { id:"h2", label:"CppUnit", href:"https://everse.software/TechRadar/reliability/cppunit_Reliability/"},
+  { id:"h2", label:"Github Actions", href:"https://everse.software/TechRadar/reliability/github_actions_Reliability/"},
+  { id:"h3", label:"JUnit", href:"https://everse.software/TechRadar/reliability/junit_Reliability/"},
+  { id:"h3", label:"tox", href:"https://everse.software/TechRadar/reliability/tox_Reliability/"},
+  { id:"h3", label:"Docker", href:"https://everse.software/TechRadar/reliability/docker_Reliability/"},
+  { id:"h3", label:"GNU Guix", href:"https://everse.software/TechRadar/reliability/gnu_guix_Reliability/"},
+  { id:"h3", label:"Gitlab CICD", href:"https://everse.software/TechRadar/reliability/gitlab_cicd_Reliability/"},
+  { id:"h3", label:"Jenkins", href:"https://everse.software/TechRadar/reliability/jenkins_Reliability/"},
+  { id:"h3", label:"SonarQube", href:"https://everse.software/TechRadar/reliability/sonarqube_Reliability/"},
+  { id:"h3", label:"Kubernetes", href:"https://everse.software/TechRadar/reliability/kubernetes_Reliability/"},
+  { id:"h3", label:"Apptainer", href:"https://everse.software/TechRadar/reliability/apptainer_Reliability/"},
+  { id:"h3", label:"Travis CI", href:"https://everse.software/TechRadar/reliability/travis_ci_Reliability/"},
+  { id:"h3", label:"Nix", href:"https://everse.software/TechRadar/reliability/nix_Reliability/"},
+  { id:"i1", label:"resqui", href:"https://everse.software/TechRadar/safety/resqui_Safety/"},
+
+  { id:"j1", label:"resqui", href:"https://everse.software/TechRadar/security/resqui_Security/"},
+  { id:"j1", label:"bandit", href:"https://everse.software/TechRadar/security/bandit/"},
+  { id:"j1", label:"Gitleaks", href:"https://everse.software/TechRadar/security/gitleaks_Security/"},
+  { id:"j1", label:"Hadolint", href:"https://everse.software/TechRadar/security/hadolint_Security/"},
+  { id:"j1", label:"bearer", href:"https://everse.software/TechRadar/security/bearer/"},
+  { id:"j3", label:"SonarQube", href:"https://everse.software/TechRadar/security/sonarqube_Security/"},
+  { id:"j3", label:"SCANOSS", href:"https://everse.software/TechRadar/security/scanoss_Security/"},
+  { id:"j3", label:"Nix", href:"https://everse.software/TechRadar/security/nix_Security/"},
+  { id:"j3", label:"Dependabot", href:"https://everse.software/TechRadar/security/dependabot_Security/"},
+
+  { id:"k1", label:"resqui", href:"https://everse.software/TechRadar/sustainability/resqui_Sustainability/"},
+  { id:"k1", label:"Github Copilot", href:"https://everse.software/TechRadar/sustainability/github_copilot/"},
+  { id:"k1", label:"Choose a License", href:"https://everse.software/TechRadar/sustainability/choose_a_license/"},
+  { id:"k1", label:"pre-commit", href:"https://everse.software/TechRadar/sustainability/pre-commit_Sustainability/"},
+  { id:"k1", label:"Gitleaks", href:"https://everse.software/TechRadar/sustainability/gitleaks_Sustainability/"},
+  { id:"k1", label:"gcov", href:"https://everse.software/TechRadar/sustainability/gcov_Sustainability/"},
+  { id:"k1", label:"valgrind", href:"https://everse.software/TechRadar/sustainability/valgrind_Sustainability/"},
+  { id:"k2", label:"Zenodo github Integration", href:"https://everse.software/TechRadar/sustainability/zenodo_github_integration/"},
+  { id:"k2", label:"Github Actions", href:"https://everse.software/TechRadar/sustainability/github_actions_Sustainability/"},
+  { id:"k2", label:"poetry", href:"https://everse.software/TechRadar/sustainability/poetry_Sustainability/"},
+
+  { id:"k3", label:"GNU Guix", href:"https://everse.software/TechRadar/sustainability/gnu_guix_Sustainability/"},
+  { id:"k3", label:"Docker", href:"https://everse.software/TechRadar/sustainability/docker_Sustainability/"},
+  { id:"k3", label:"zenodo", href:"https://everse.software/TechRadar/sustainability/zenodo_Sustainability/"},
+  { id:"k3", label:"javadoc", href:"https://everse.software/TechRadar/sustainability/javadoc_Sustainability/"},
+  { id:"k3", label:"Gitlab CICD", href:"https://everse.software/TechRadar/sustainability/gitlab_cicd_Sustainability/"},
+  { id:"k3", label:"DVC", href:"https://everse.software/TechRadar/sustainability/dvc_Sustainability/"},
+  { id:"k3", label:"Apptainer", href:"https://everse.software/TechRadar/sustainability/apptainer_Sustainability/"},
+  { id:"k3", label:"tox", href:"https://everse.software/TechRadar/sustainability/tox_Sustainability/"},
+  { id:"k3", label:"Software Heritage", href:"https://everse.software/TechRadar/sustainability/software_heritage/"},
+  { id:"k3", label:"Kubertnetes", href:"https://everse.software/TechRadar/sustainability/kubernetes_Sustainability/"},
+  { id:"k3", label:"Hermes Workflows", href:"https://everse.software/TechRadar/sustainability/hermes_workflows_Sustainability/"}
 ];
 
 
@@ -333,6 +349,12 @@ const padding = 40;
 const radius = Math.min(W,H)/2 - padding;
 CONFIG.radius = radius;
 
+
+export const hooks = {
+  onSegment: (segment)=>{},
+  onChunk:   (segment,ring)=>{},
+  onItem:    (segment,ring,item)=>{}
+};
 
 
 /* =======================
@@ -493,15 +515,40 @@ function drawSegmentLabels(svg, labels) {
     const angle = ((s + 0.5)/segments)*2*Math.PI - Math.PI/2;
     const p = polar(cx, cy, labelRadius, angle);
 
+    // svg.append(
+    //   // el("text",{
+    //   //   x:p.x,
+    //   //   y:p.y,
+    //   //   "text-anchor":"middle",
+    //   //   "dominant-baseline":"middle",
+    //   //   class:"segment-label"
+    //   // },[labels[s]])
+    //   el("text",{
+    //     x:p.x,
+    //     y:p.y,
+    //     "text-anchor":"middle",
+    //     "dominant-baseline":"middle",
+    //     class:"segment-label",
+    //     "data-segment": labels[s]
+    //   },[labels[s]])
+    // );
+
+    const href = `#segment-${encodeURIComponent(labels[s])}`;
+
     svg.append(
-      el("text",{
-        x:p.x,
-        y:p.y,
-        "text-anchor":"middle",
-        "dominant-baseline":"middle",
-        class:"segment-label"
-      },[labels[s]])
+      el("a",{href},
+        [el("text",{
+          x:p.x,
+          y:p.y,
+          "text-anchor":"middle",
+          "dominant-baseline":"middle",
+          class:"segment-label",
+          "data-segment": labels[s]
+        },[labels[s]])]
+      )
     );
+
+
   }
 }
 
@@ -557,17 +604,82 @@ function placeInCell(cellId, item) {
   return null; // cell full
 }
 
-function addItem({id,label}) {
+// function addItem({id,label}) {
+//   if (!cellGeometry[id]) return;
+// 
+//   const p = placeInCell(id,{id,label});
+//   if (!p) return;
+// 
+//   svg.append(
+//     el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"}),
+//     el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label])
+//   );
+// }
+
+function itemHref(item) {
+  // placeholder canonical URL
+  return `/item/${encodeURIComponent(item.label.toLowerCase().replace(/\s+/g,'-'))}.html`;
+}
+
+
+// function addItem(item) {
+//   const {id,label} = item;
+//   if (!cellGeometry[id]) return;
+// 
+//   const p = placeInCell(id,item);
+//   if (!p) return;
+// 
+//   const segIndex = letters.indexOf(id[0]);
+//   const ringIndex = Number(id.slice(1))-1;
+// 
+//   const group = el("g",{
+//     class:"item",
+//     "data-segment": segment_labels[segIndex],
+//     "data-ring": ring_labels[ringIndex]
+//   });
+// 
+//   group.__data = item;
+// 
+//   group.append(
+//     el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"}),
+//     el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label])
+//   );
+// 
+//   svg.append(group);
+// }
+
+function addItem(item) {
+  const {id,label} = item;
   if (!cellGeometry[id]) return;
 
-  const p = placeInCell(id,{id,label});
+  const p = placeInCell(id,item);
   if (!p) return;
 
-  svg.append(
+  const segIndex = letters.indexOf(id[0]);
+  const ringIndex = Number(id.slice(1))-1;
+
+  const link = el("a",{
+    href: item.href ?? itemHref(item)
+  });
+
+  const group = el("g",{
+    class:"item",
+    "data-segment": segment_labels[segIndex],
+    "data-ring": ring_labels[ringIndex]
+  });
+
+  group.__data = item;
+
+  group.append(
     el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"}),
     el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label])
   );
+
+  link.append(group);
+  svg.append(link);
 }
+
+
 
 const GRID = 7;
 const occupancy = {};  // id -> Set("x,y")
@@ -663,14 +775,47 @@ for (let s=0; s<CONFIG.segments; s++) {
 
       createChunkGradient(defs, s, r, hue, sThis, sNext, r0, r1, reverseForVisibility);
 
-      board.append(
+      // board.append(
+      //   el("path", {
+      //     d: path,
+      //     class: "cell",
+      //     id,
+      //     fill: `url(#chunkGrad-${s}-${r})`
+      //   })
+      // );
+
+      const segmentLabel = segment_labels[s];
+      const ringLabel = ring_labels[r];
+
+      // board.append(
+      //   el("path", {
+      //     d: path,
+      //     class: "cell",
+      //     id,
+      //     fill: `url(#chunkGrad-${s}-${r})`,
+      //     "data-segment": segmentLabel,
+      //     "data-ring": ringLabel
+      //   })
+      // );
+
+      const chunkHref =
+        `#chunk-${encodeURIComponent(segmentLabel)}-${encodeURIComponent(ringLabel)}`;
+
+      const link = el("a",{href:chunkHref});
+
+      link.append(
         el("path", {
           d: path,
           class: "cell",
           id,
-          fill: `url(#chunkGrad-${s}-${r})`
+          fill: `url(#chunkGrad-${s}-${r})`,
+          "data-segment": segmentLabel,
+          "data-ring": ringLabel
         })
       );
+
+      board.append(link);
+
       cellGeometry[id] = {a0,a1,r0,r1};
   }
 }
@@ -702,11 +847,103 @@ drawSegmentLabels(svg, segment_labels);
 
 ITEMS.forEach(addItem);
 
+// svg.addEventListener("click", (ev) => {
+// 
+//   const rect = svg.getBoundingClientRect();
+// 
+//   // mouse position in SVG coordinates
+//   const x = (ev.clientX - rect.left) * (W / rect.width);
+//   const y = (ev.clientY - rect.top)  * (H / rect.height);
+// 
+//   const dx = x - cx;
+//   const dy = y - cy;
+//   const dist = Math.sqrt(dx*dx + dy*dy);
+// 
+//   const clickedOutsideCircle = dist > CONFIG.radius;
+// 
+//   if (clickedOutsideCircle) {
+//     document.body.classList.toggle("map-expanded");
+//   }
+// });
+
+// svg.addEventListener("click", (ev) => {
+// 
+//   // --- ITEM ---
+//   const item = ev.target.closest(".item");
+//   if (item) {
+//     hooks.onItem(
+//       item.dataset.segment,
+//       item.dataset.ring,
+//       item.__data
+//     );
+//     return;
+//   }
+// 
+//   // --- CHUNK ---
+//   const chunk = ev.target.closest(".cell");
+//   if (chunk) {
+//     hooks.onChunk(
+//       chunk.dataset.segment,
+//       chunk.dataset.ring
+//     );
+//     return;
+//   }
+// 
+//   // --- SEGMENT LABEL ---
+//   const seg = ev.target.closest(".segment-label");
+//   if (seg) {
+//     hooks.onSegment(seg.dataset.segment);
+//     return;
+//   }
+// 
+//   // --- OUTSIDE CIRCLE (zoom toggle) ---
+//   const rect = svg.getBoundingClientRect();
+//   const x = (ev.clientX - rect.left) * (W / rect.width);
+//   const y = (ev.clientY - rect.top)  * (H / rect.height);
+// 
+//   const dx = x - cx;
+//   const dy = y - cy;
+//   const dist = Math.sqrt(dx*dx + dy*dy);
+// 
+//   if (dist > CONFIG.radius)
+//     document.body.classList.toggle("map-expanded");
+// });
+
 svg.addEventListener("click", (ev) => {
 
-  const rect = svg.getBoundingClientRect();
+  // --- ITEM ---
+  const item = ev.target.closest(".item");
+  if (item) {
+    const handled = hooks.onItem(
+      item.dataset.segment,
+      item.dataset.ring,
+      item.__data
+    );
+    if (handled === true) ev.preventDefault();
+    return;
+  }
 
-  // mouse position in SVG coordinates
+  // --- CHUNK ---
+  const chunk = ev.target.closest(".cell");
+  if (chunk) {
+    const handled = hooks.onChunk(
+      chunk.dataset.segment,
+      chunk.dataset.ring
+    );
+    if (handled === true) ev.preventDefault();
+    return;
+  }
+
+  // --- SEGMENT ---
+  const seg = ev.target.closest(".segment-label");
+  if (seg) {
+    const handled = hooks.onSegment(seg.dataset.segment);
+    if (handled === true) ev.preventDefault();
+    return;
+  }
+
+  // --- background zoom ---
+  const rect = svg.getBoundingClientRect();
   const x = (ev.clientX - rect.left) * (W / rect.width);
   const y = (ev.clientY - rect.top)  * (H / rect.height);
 
@@ -714,12 +951,10 @@ svg.addEventListener("click", (ev) => {
   const dy = y - cy;
   const dist = Math.sqrt(dx*dx + dy*dy);
 
-  const clickedOutsideCircle = dist > CONFIG.radius;
-
-  if (clickedOutsideCircle) {
+  if (dist > CONFIG.radius)
     document.body.classList.toggle("map-expanded");
-  }
 });
+
 
 window.addEventListener("keydown", e=>{
   if(e.key==="Escape") {
@@ -727,6 +962,25 @@ window.addEventListener("keydown", e=>{
     updateHint();
   }
 });
+
+// hooks.onItem = (s,r,item)=>console.log("ITEM",s,r,item);
+// hooks.onChunk = (s,r)=>console.log("CHUNK",s,r);
+// hooks.onSegment = s=>console.log("SEGMENT",s);
+
+hooks.onItem = (s,r,item)=>{
+  console.log("ITEM",s,r,item);
+  return false;   // allow navigation
+};
+
+hooks.onChunk = (s,r)=>{
+  console.log("CHUNK",s,r);
+  return true;    // prevent scroll -> future popup
+};
+
+hooks.onSegment = s=>{
+  console.log("SEGMENT",s);
+  return true;    // prevent scroll -> future behaviour
+};
 
 
 </script>
