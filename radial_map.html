@@ -8,11 +8,35 @@
   body {
     margin: 0;
     font-family: system-ui, sans-serif;
-    background: #1e1e24;
+    background: #ffffff;
     color: #ddd;
     display: flex;
     flex-direction: column;
     align-items: centre;
+  }
+
+  #layout {
+    display: grid;
+    grid-template-columns: max-content auto;
+    gap: 36px;
+    max-width: 1400px;
+    margin: 20px 24px;
+    align-items: start;
+
+    color: #000;
+  }
+
+  #info {
+    color: #000;
+  }
+
+  #info h1 {
+    margin-top: 0;
+    font-size: 28px;
+  }
+
+  #info p {
+    line-height: 1.5;
   }
 
   header {
@@ -23,16 +47,23 @@
   }
 
   #container {
-    width: min(1400px, 95vw);
-    aspect-ratio: 16/9;
+    max-width: 100%;
+    aspect-ratio: 10/9;
+    height: min(90vh, 900px);
+    width: auto;
     margin: 20px auto;
-    background: #ffffff;
-    border: 1px solid #444;
+  /* border: 1px solid #444; */ /* For handy debugging... */
+    background:
+      radial-gradient(circle at 30% 25%, rgba(255,255,255,0.9), #ffffff 60%);
   }
 
   svg {
     width: 100%;
     height: 100%;
+    display: block;
+    filter:
+         drop-shadow(0px 0px 10px rgba(0,0,0,0.18))
+         drop-shadow(0px 0px 30px rgba(0,0,0,0.2));
   }
 
   .cell {
@@ -52,22 +83,73 @@
 
   .dot-label {
     fill: #000;
-    font-size: 11px;
+    font-size: 13px;
     text-anchor: left;
     pointer-events: none;
   }
 
   .ring-label {
     fill: #000;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
   }
 
   .segment-label {
     fill: #000;
-    font-size: 13px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  /*   Prevent rim stealing events */
+  .rim { pointer-events:none; }
+
+@media (max-width: 1000px) {
+  #layout {
+    grid-template-columns: 1fr;
   }
 
+  #info {
+    max-width: 70ch;
+  }
+}
+
+/* expanded / focus mode */
+/* focus mode */
+body.map-expanded #layout {
+  grid-template-columns: 1fr;
+}
+
+body.map-expanded #info {
+  display: none;
+}
+
+/* make the svg own the viewport width */
+body.map-expanded #container {
+  position: relative;
+
+  width: 100vw;
+  height: auto;
+  max-width: none;
+ 
+  margin-left: calc(50% - 50vw);   /* escape parent width */
+}
+
+/* remove height constraint */
+body.map-expanded #container svg {
+  height: auto;
+  width: 100%;
+}
+.hint-label {
+  font-size: 18px;
+  font-weight: 600;
+  fill: #444;
+  opacity: 0.7;
+  pointer-events: none;
+  user-select: none;
+  font-style: italic;
+}
+svg:hover .hint-label {
+  opacity: 1;
+}
 </style>
 </head>
 
@@ -77,23 +159,39 @@
   <strong>Radial Map — version 0</strong>
 </header>
 
-<div id="container"></div>
+<div id="layout">
+  <div id="container"></div>
+
+  <aside id="info">
+    <h1>Radial Map</h1>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+      Praesent vitae eros eget tellus tristique bibendum. 
+      Donec rutrum sed sem quis venenatis. Proin viverra risus a eros volutpat tempor.
+    </p>
+  </aside>
+</div>
+
+
+<!-- <div id="container"></div> -->
 
 <script type="module">
 /* =======================
    Configuration
 ======================= */
 
-const ring_labels = ["inner","middle","outer"];
-const segment_labels = ["richard","of","york","gave","battle","in","vain"];
 
-const CONFIG = {
-  segments: segment_labels.length,  // 7,
-  rings: ring_labels.length, // 3,
-  radius: 350
-};
+const ring_labels = ["Analysis","Prototype","Infrastructure"];
+const segment_labels = [ "Compatibility", "FAIRness",
+                         "Flexibility", "Functional Suitability",
+                         "Interaction Capability", "Maintainability",
+                         "Performance Efficiency", "Reliability",
+                         "Safety", "Security",
+                         "Sustainability" ]
 
-const ITEMS = [
+
+
+const _ITEMS = [
   { id:"a1", label:"Apple" },
   { id:"c3", label:"Banana" },
   { id:"d2", label:"Cat" },
@@ -103,6 +201,139 @@ const ITEMS = [
   { id:"a3", label:"Grape" },
   { id:"c1", label:"Horse" }
 ];
+
+const ITEMS = [
+  { id:"a1", label:"resqui" },
+  { id:"a3", label:"Docker" },
+  { id:"a3", label:"Apptainer" },
+  { id:"a3", label:"SingularityCE" },
+  { id:"a3", label:"CMAKE" },
+  { id:"b1", label:"resqui" },
+  { id:"b1", label:"SQAaas" },
+  { id:"b1", label:"eOSSR" },
+  { id:"b1", label:"Fair-Aware tool" },
+  { id:"b1", label:"Five Recommendations for FAIR Software" },
+  { id:"b2", label:"REUSE" },
+  { id:"b2", label:"Fair Python CookieCutter" },
+  { id:"b3", label:"zenodo" },
+  { id:"b3", label:"Hermes Workflows" },
+  { id:"b3", label:"howfairis" },
+  { id:"b3", label:"F-UJI" },
+  { id:"b3", label:"DVC" },
+  { id:"b3", label:"SOMEF" },
+  { id:"b3", label:"cffinit" },
+  { id:"b3", label:"CC-License Chooser" },
+  { id:"b3", label:"Somesy" },
+  { id:"b3", label:"CodeMeta Generator" },
+  { id:"c1", label:"resqui" },
+  { id:"c2", label:"pypi" },
+  { id:"c3", label:"SingularityCE" },
+  { id:"c3", label:"Nix" },
+  { id:"c3", label:"Docker" },
+  { id:"c3", label:"Apptainer" },
+  { id:"d1", label:"resqui" },
+  { id:"e1", label:"resqui" },
+  { id:"e2", label:"mkDocs" },
+  { id:"e3", label:"tox" },
+  { id:"e3", label:"Jupyter" },
+  { id:"f1", label:"resqui" },
+  { id:"f1", label:"Checkstyle" },
+  { id:"f1", label:"Hadolint" },
+  { id:"f1", label:"valgrind" },
+  { id:"f1", label:"pre-commit" },
+  { id:"f1", label:"gcov" },
+  { id:"f1", label:"ruff" },
+  { id:"f1", label:"Qlty" },
+  { id:"f1", label:"doxygen" },
+  { id:"f1", label:"pytest" },
+  { id:"f1", label:"flake8" },
+  { id:"f1", label:"pylint" },
+  { id:"f2", label:"poetry" },
+  { id:"f2", label:"black" },
+  { id:"f2", label:"pypi" },
+  { id:"f2", label:"CppUnit" },
+  { id:"f3", label:"sphinx" },
+  { id:"f3", label:"cmake" },
+  { id:"f3", label:"Hermes Workflows" },
+  { id:"f3", label:"Kubernetes" },
+  { id:"f3", label:"Jupyter" },
+  { id:"f3", label:"Jenkins" },
+  { id:"f3", label:"GNU Guix" },
+  { id:"f3", label:"tox" },
+  { id:"f3", label:"Travis CI" },
+  { id:"f3", label:"javadoc" },
+  { id:"f3", label:"Junit" },
+  { id:"f3", label:"SonarQube" },
+  { id:"f3", label:"Git" },
+  { id:"f3", label:"SCANOSS" },
+  { id:"f3", label:"Dependabot" },
+  { id:"g1", label:"resqui" },
+  { id:"g1", label:"valgrind" },
+  { id:"g1", label:"score-p" },
+  { id:"h1", label:"resqui" },
+  { id:"h1", label:"valgrind" },
+  { id:"h1", label:"pytest" },
+  { id:"h2", label:"CppUnit" },
+  { id:"h2", label:"Github Actions" },
+  { id:"h3", label:"JUnit" },
+  { id:"h3", label:"tox" },
+  { id:"h3", label:"Docker" },
+  { id:"h3", label:"GNU Guix" },
+  { id:"h3", label:"Gitlab CICD" },
+  { id:"h3", label:"Jenkins" },
+  { id:"h3", label:"SonarQube" },
+  { id:"h3", label:"Kubernetes" },
+  { id:"h3", label:"Apptainer" },
+  { id:"h3", label:"Travis CI" },
+  { id:"h3", label:"Nix" },
+  { id:"i1", label:"resqui" },
+  { id:"j1", label:"resqui" },
+  { id:"j1", label:"bandit" },
+  { id:"j1", label:"Gitleaks" },
+  { id:"j1", label:"Hadolint" },
+  { id:"j1", label:"bearer" },
+  { id:"j3", label:"SonarQube" },
+  { id:"j3", label:"SCANOSS" },
+  { id:"j3", label:"Nix" },
+  { id:"j3", label:"Dependabot" },
+  { id:"k1", label:"resqui" },
+  { id:"k1", label:"Github Copilot" },
+  { id:"k1", label:"Choose a License" },
+  { id:"k1", label:"pre-commit" },
+  { id:"k1", label:"Gitleaks" },
+  { id:"k1", label:"gcov" },
+  { id:"k1", label:"valgrind" },
+  { id:"k2", label:"Zenodo github Integration" },
+  { id:"k2", label:"Github Actions" },
+  { id:"k2", label:"poetry" },
+  { id:"k3", label:"GNU Guix" },
+  { id:"k3", label:"Docker" },
+  { id:"k3", label:"zenodo" },
+  { id:"k3", label:"javadoc" },
+  { id:"k3", label:"Gitlab CICD" },
+  { id:"k3", label:"DVC" },
+  { id:"k3", label:"Apptainer" },
+  { id:"k3", label:"tox" },
+  { id:"k3", label:"Software Heritage" },
+  { id:"k3", label:"Kubertnetes" },
+  { id:"k3", label:"Hermes Workflows" }
+];
+
+
+const W = 1000;
+const H = 900;
+
+const CONFIG = {
+  segments: segment_labels.length,  // 7,
+  rings: ring_labels.length, // 3,
+  radius: 400 // Default initial value, gets overwritten below
+};
+
+const padding = 40;
+const radius = Math.min(W,H)/2 - padding;
+CONFIG.radius = radius;
+
+
 
 /* =======================
    SVG helpers
@@ -178,26 +409,18 @@ function createChunkGradient(defs, seg, ring, hueDeg, sThis, sNext, r0, r1, reve
   const cThis = hsvToCssHsl(hueDeg, sThis, 100);
   const cNext = hsvToCssHsl(hueDeg, sNext, 100);
 
-  // const grad = el("radialGradient", {
-  //   id: `chunkGrad-${seg}-${ring}`,
-  //   gradientUnits: "userSpaceOnUse",
-  //   cx: cx,
-  //   cy: cy,
-  //   r: CONFIG.radius
-  // });
+  const grad = el("radialGradient", {
+    id: `chunkGrad-${seg}-${ring}`,
+    gradientUnits: "userSpaceOnUse",
 
-const grad = el("radialGradient", {
-  id: `chunkGrad-${seg}-${ring}`,
-  gradientUnits: "userSpaceOnUse",
+    cx: cx,
+    cy: cy,
+    r: r1,
 
-  cx: cx,
-  cy: cy,
-  r: r1,
-
-  fx: cx,
-  fy: cy,
-  fr: r0
-});
+    fx: cx,
+    fy: cy,
+    fr: r0
+  });
 
 
   const c0 = reverse ? cNext : cThis;
@@ -209,6 +432,7 @@ const grad = el("radialGradient", {
   );
 
   defs.append(grad);
+
 }
 
 /* =======================
@@ -222,17 +446,6 @@ function randomInCell(id) {
   const radius = Math.sqrt(Math.random())*(g.r1-g.r0)+g.r0;
 
   return polar(cx,cy,radius,angle);
-}
-
-function addItem({id,label}) {
-  if (!cellGeometry[id]) return;
-
-  const p = randomInCell(id);
-
-  svg.append(
-    el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"}),
-    el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label])
-  );
 }
 
 function drawRingLabels(svg, labels) {
@@ -280,12 +493,6 @@ function drawSegmentLabels(svg, labels) {
     const angle = ((s + 0.5)/segments)*2*Math.PI - Math.PI/2;
     const p = polar(cx, cy, labelRadius, angle);
 
-    let rotation = angle * 180/Math.PI;
-
-    // keep upright
-    if (rotation > 90 || rotation < -90)
-      rotation += 180;
-
     svg.append(
       el("text",{
         x:p.x,
@@ -298,6 +505,74 @@ function drawSegmentLabels(svg, labels) {
   }
 }
 
+function outerArcPath(cx, cy, r, a0, a1) {
+  const p0 = polar(cx, cy, r, a0);
+  const p1 = polar(cx, cy, r, a1);
+  const large = (a1-a0) > Math.PI ? 1 : 0;
+
+  return `M ${p0.x} ${p0.y}
+          A ${r} ${r} 0 ${large} 1 ${p1.x} ${p1.y}`;
+}
+
+function gridToPolar(cell, gx, gy, N) {
+  const u = (gx + 0.5)/N;
+  const v = (gy + 0.5)/N;
+
+  const angle  = cell.a0 + u*(cell.a1-cell.a0);
+  const radius = cell.r0 + v*(cell.r1-cell.r0);
+
+  return polar(cx, cy, radius, angle);
+}
+
+function hashString(str) {
+  // FNV-1a based hash
+  let h = 2166136261;
+  for (let i=0;i<str.length;i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h,16777619);
+  }
+  return h>>>0;
+}
+
+function placeInCell(cellId, item) {
+  if (!occupancy[cellId])
+    occupancy[cellId] = new Map();
+
+  let h = hashString(item.label);
+
+  for (let attempt=0; attempt<GRID*GRID; attempt++) {
+
+    const x = h % GRID;
+    const y = Math.floor(h / GRID) % GRID;
+    const key = `${x},${y}`;
+
+    if (!occupancy[cellId].has(key)) {
+      occupancy[cellId].set(key, item);
+      return gridToPolar(cellGeometry[cellId], x, y, GRID);
+    }
+
+    h = (h*1664525 + 1013904223) >>> 0;
+  }
+
+  return null; // cell full
+}
+
+function addItem({id,label}) {
+  if (!cellGeometry[id]) return;
+
+  const p = placeInCell(id,{id,label});
+  if (!p) return;
+
+  svg.append(
+    el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"}),
+    el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label])
+  );
+}
+
+const GRID = 7;
+const occupancy = {};  // id -> Set("x,y")
+
+
 // ===================================================================================================
 //
 // ACTUAL CODE STARTS HERE
@@ -305,9 +580,7 @@ function drawSegmentLabels(svg, labels) {
 // ===================================================================================================
 
 const min_S = 15;
-const max_S = 85;
-const W = 1600;
-const H = 900;
+const max_S = 60;
 const cx = W/2;
 const cy = H/2;
 
@@ -322,6 +595,46 @@ const letters = "abcdefghijklmnopqrstuvwxyz";
 
 const defs = el("defs");
 svg.append(defs);
+
+const board = el("g",{});
+svg.append(board);
+
+const uiLayer = el("g",{class:"ui"});
+svg.append(uiLayer);
+
+const hintText = el("text",{
+  class:"hint-label",
+  "text-anchor":"end",
+  "dominant-baseline":"hanging"
+});
+
+uiLayer.append(hintText);
+
+function placeHint() {
+  hintText.setAttribute("x", W - 16);
+  hintText.setAttribute("y", 16);
+}
+
+placeHint();
+
+function updateHint() {
+  hintText.textContent =
+    document.body.classList.contains("map-expanded")
+      ? "escape to exit"
+      : "click outside circle to zoom";
+}
+
+updateHint();
+
+const observer = new MutationObserver(updateHint);
+
+observer.observe(document.body, {
+  attributes: true,
+  attributeFilter: ["class"]
+});
+
+requestAnimationFrame(updateHint);
+
 
 /* store geometry for later dot placement */
 const cellGeometry = {};
@@ -350,7 +663,7 @@ for (let s=0; s<CONFIG.segments; s++) {
 
       createChunkGradient(defs, s, r, hue, sThis, sNext, r0, r1, reverseForVisibility);
 
-      svg.append(
+      board.append(
         el("path", {
           d: path,
           class: "cell",
@@ -362,10 +675,59 @@ for (let s=0; s<CONFIG.segments; s++) {
   }
 }
 
+const rimLayer = el("g",{class:"rim"});
+board.append(rimLayer);
+
+for (let s=0; s<CONFIG.segments; s++) {
+
+  const hue = (s/CONFIG.segments)*360;
+
+  const a0 = (s/CONFIG.segments)*2*Math.PI - Math.PI/2;
+  const a1 = ((s+1)/CONFIG.segments)*2*Math.PI - Math.PI/2;
+
+  rimLayer.append(
+    el("path",{
+      d: outerArcPath(cx, cy, CONFIG.radius, a0, a1),
+      stroke: hsvToCssHsl(hue,100,100),
+      "stroke-width": 2,
+      fill:"none",
+      "stroke-linecap":"round"
+    })
+  );
+}
+
+
 drawRingLabels(svg, ring_labels);
 drawSegmentLabels(svg, segment_labels);
 
 ITEMS.forEach(addItem);
+
+svg.addEventListener("click", (ev) => {
+
+  const rect = svg.getBoundingClientRect();
+
+  // mouse position in SVG coordinates
+  const x = (ev.clientX - rect.left) * (W / rect.width);
+  const y = (ev.clientY - rect.top)  * (H / rect.height);
+
+  const dx = x - cx;
+  const dy = y - cy;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+
+  const clickedOutsideCircle = dist > CONFIG.radius;
+
+  if (clickedOutsideCircle) {
+    document.body.classList.toggle("map-expanded");
+  }
+});
+
+window.addEventListener("keydown", e=>{
+  if(e.key==="Escape") {
+    document.body.classList.remove("map-expanded");
+    updateHint();
+  }
+});
+
 
 </script>
 </body>
