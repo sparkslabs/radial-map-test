@@ -56,6 +56,18 @@
     text-anchor: left;
     pointer-events: none;
   }
+
+  .ring-label {
+    fill: #000;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .segment-label {
+    fill: #000;
+    font-size: 13px;
+  }
+
 </style>
 </head>
 
@@ -72,9 +84,12 @@
    Configuration
 ======================= */
 
+const ring_labels = ["inner","middle","outer"];
+const segment_labels = ["richard","of","york","gave","battle","in","vain"];
+
 const CONFIG = {
-  segments: 7,
-  rings: 3,
+  segments: segment_labels.length,  // 7,
+  rings: ring_labels.length, // 3,
   radius: 350
 };
 
@@ -152,6 +167,12 @@ function ringS(ringIndex, rings) {
   return ((max_S - min_S) / (rings - 1)) * ((rings - 1) - ringIndex) + min_S;
 }
 
+function ringMidRadius(r, rings, maxR) {
+  const r0 = maxR * (r / rings);
+  const r1 = maxR * ((r+1) / rings);
+  return (r0 + r1) / 2;
+}
+
 function createChunkGradient(defs, seg, ring, hueDeg, sThis, sNext, reverse=false) {
 
   const cThis = hsvToCssHsl(hueDeg, sThis, 100);
@@ -200,6 +221,68 @@ function addItem({id,label}) {
   );
 }
 
+function drawRingLabels(svg, labels) {
+
+  const rings = labels.length;
+
+  for (let r=0; r<rings; r++) {
+
+    const radius = ringMidRadius(r, rings, CONFIG.radius);
+
+    // left side (mirrored order)
+    const left = polar(cx, cy, radius, Math.PI);
+    svg.append(
+      el("text",{
+        x:left.x,
+        y:left.y,
+        "text-anchor":"middle",
+        "dominant-baseline":"middle",
+        class:"ring-label"
+      // },[labels[rings-1-r]])
+      },[labels[r]])
+    );
+
+    // right side
+    const right = polar(cx, cy, radius, 0);
+    svg.append(
+      el("text",{
+        x:right.x,
+        y:right.y,
+        "text-anchor":"middle",
+        "dominant-baseline":"middle",
+        class:"ring-label"
+      },[labels[r]])
+    );
+  }
+}
+
+function drawSegmentLabels(svg, labels) {
+
+  const segments = labels.length;
+  const labelRadius = CONFIG.radius + 28;
+
+  for (let s=0; s<segments; s++) {
+
+    const angle = ((s + 0.5)/segments)*2*Math.PI - Math.PI/2;
+    const p = polar(cx, cy, labelRadius, angle);
+
+    let rotation = angle * 180/Math.PI;
+
+    // keep upright
+    if (rotation > 90 || rotation < -90)
+      rotation += 180;
+
+    svg.append(
+      el("text",{
+        x:p.x,
+        y:p.y,
+        "text-anchor":"middle",
+        "dominant-baseline":"middle",
+        class:"segment-label"
+      },[labels[s]])
+    );
+  }
+}
 
 // ===================================================================================================
 //
@@ -207,7 +290,6 @@ function addItem({id,label}) {
 //
 // ===================================================================================================
 
-const INNER_VALUE = 0.35;   // centre darkness
 const min_S = 15;
 const max_S = 85;
 const W = 1600;
@@ -265,6 +347,9 @@ for (let s=0; s<CONFIG.segments; s++) {
       cellGeometry[id] = {a0,a1,r0,r1};
   }
 }
+
+drawRingLabels(svg, ring_labels);
+drawSegmentLabels(svg, segment_labels);
 
 ITEMS.forEach(addItem);
 
