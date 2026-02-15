@@ -544,16 +544,50 @@ function hashString(str) {
   return h>>>0;
 }
 
+// function placeInCell(cellId, item) {
+//   if (!occupancy[cellId])
+//     occupancy[cellId] = new Map();
+// 
+//   let h = hashString(item.label);
+// 
+//   for (let attempt=0; attempt<GRID*GRID; attempt++) {
+// 
+//     const x = h % GRID;
+//     const y = Math.floor(h / GRID) % GRID;
+//     const key = `${x},${y}`;
+// 
+//     if (!occupancy[cellId].has(key)) {
+//       occupancy[cellId].set(key, item);
+//       return gridToPolar(cellGeometry[cellId], x, y, GRID);
+//     }
+// 
+//     h = (h*1664525 + 1013904223) >>> 0;
+//   }
+// 
+//   return null; // cell full
+// }
+
 function placeInCell(cellId, item) {
   if (!occupancy[cellId])
     occupancy[cellId] = new Map();
 
+  const ringIndex = Number(cellId.slice(1)) - 1;
+  const isInnerRing = (ringIndex === 0);
+
   let h = hashString(item.label);
 
-  for (let attempt=0; attempt<GRID*GRID; attempt++) {
+  for (let attempt=0; attempt<GRID*GRID*2; attempt++) {
 
     const x = h % GRID;
     const y = Math.floor(h / GRID) % GRID;
+
+    // --- NEW RULE ---
+    // Avoid centre distortion: reserve first 2 radial rows in inner ring
+    if (isInnerRing && y < 2) {
+      h = (h*1664525 + 1013904223) >>> 0;
+      continue;
+    }
+
     const key = `${x},${y}`;
 
     if (!occupancy[cellId].has(key)) {
@@ -566,6 +600,10 @@ function placeInCell(cellId, item) {
 
   return null; // cell full
 }
+
+
+
+
 
 function itemHref(item) {
   // placeholder canonical URL
@@ -819,7 +857,6 @@ hooks.onSegment = s=>{
   console.log("SEGMENT",s);
   return true;    // prevent scroll -> future behaviour
 };
-
 
 </script>
 </body>
