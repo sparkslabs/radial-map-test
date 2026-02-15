@@ -35,14 +35,14 @@
     height: 100%;
   }
 
+
   .cell {
-    fill: #1a2430;
-    stroke: #394b5f;
+    stroke: #202830;
     stroke-width: 1.5;
   }
 
   .cell:hover {
-    fill: #2c3c4f;
+    filter: brightness(1.15);
   }
 
   .dot {
@@ -74,7 +74,7 @@
 ======================= */
 
 const CONFIG = {
-  segments: 6,
+  segments: 11,
   rings: 3,
   radius: 320
 };
@@ -124,6 +124,10 @@ function sectorPath(cx, cy, r0, r1, a0, a1) {
   `;
 }
 
+function hsv(h, s, v) {
+  return `hsl(${h},${s}%,${v}%)`;
+}
+
 /* =======================
    Map build
 ======================= */
@@ -142,10 +146,13 @@ const letters = "abcdefghijklmnopqrstuvwxyz";
 const cellGeometry = {};
 
 for (let s=0; s<CONFIG.segments; s++) {
+
+  const hue = (s / CONFIG.segments) * 360;
+
   for (let r=1; r<=CONFIG.rings; r++) {
 
-    const a0 = (s/CONFIG.segments)*TAU - Math.PI/2;
-    const a1 = ((s+1)/CONFIG.segments)*TAU - Math.PI/2;
+    const a0 = (s/CONFIG.segments)*2*Math.PI - Math.PI/2;
+    const a1 = ((s+1)/CONFIG.segments)*2*Math.PI - Math.PI/2;
 
     const r0 = CONFIG.radius*((r-1)/CONFIG.rings);
     const r1 = CONFIG.radius*(r/CONFIG.rings);
@@ -154,8 +161,17 @@ for (let s=0; s<CONFIG.segments; s++) {
 
     const path = sectorPath(cx,cy,r0,r1,a0,a1);
 
+    /* saturation interpolation */
+    const t = (r-1)/(CONFIG.rings-1);   // 0 inner → 1 outer
+    const sat = 90 - (80*t);            // 90% → 10%
+
     svg.append(
-      el("path",{d:path,class:"cell",id})
+      el("path",{
+        d:path,
+        class:"cell",
+        id,
+        fill:hsv(hue, sat, 100)
+      })
     );
 
     cellGeometry[id] = {a0,a1,r0,r1};
@@ -191,3 +207,4 @@ ITEMS.forEach(addItem);
 </script>
 </body>
 </html>
+
