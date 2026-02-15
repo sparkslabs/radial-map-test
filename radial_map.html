@@ -173,18 +173,32 @@ function ringMidRadius(r, rings, maxR) {
   return (r0 + r1) / 2;
 }
 
-function createChunkGradient(defs, seg, ring, hueDeg, sThis, sNext, reverse=false) {
+function createChunkGradient(defs, seg, ring, hueDeg, sThis, sNext, r0, r1, reverse=false) {
 
   const cThis = hsvToCssHsl(hueDeg, sThis, 100);
   const cNext = hsvToCssHsl(hueDeg, sNext, 100);
 
-  const grad = el("radialGradient", {
-    id: `chunkGrad-${seg}-${ring}`,
-    gradientUnits: "userSpaceOnUse",
-    cx: cx,
-    cy: cy,
-    r: CONFIG.radius
-  });
+  // const grad = el("radialGradient", {
+  //   id: `chunkGrad-${seg}-${ring}`,
+  //   gradientUnits: "userSpaceOnUse",
+  //   cx: cx,
+  //   cy: cy,
+  //   r: CONFIG.radius
+  // });
+
+const grad = el("radialGradient", {
+  id: `chunkGrad-${seg}-${ring}`,
+  gradientUnits: "userSpaceOnUse",
+
+  cx: cx,
+  cy: cy,
+  r: r1,
+
+  fx: cx,
+  fy: cy,
+  fr: r0
+});
+
 
   const c0 = reverse ? cNext : cThis;
   const c1 = reverse ? cThis : cNext;
@@ -334,7 +348,7 @@ for (let s=0; s<CONFIG.segments; s++) {
         ? 0                                  // white in HSV terms
         : ringS(r + 1, CONFIG.rings);
 
-      createChunkGradient(defs, s, r, hue, sThis, sNext, reverseForVisibility);
+      createChunkGradient(defs, s, r, hue, sThis, sNext, r0, r1, reverseForVisibility);
 
       svg.append(
         el("path", {
