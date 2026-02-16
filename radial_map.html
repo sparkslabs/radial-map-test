@@ -85,7 +85,6 @@
     fill: #000;
     font-size: 13px;
     text-anchor: left;
-    pointer-events: none;
   }
 
   .ring-label {
@@ -207,6 +206,17 @@ svg:hover .hint-label {
   fill: #0a58ca;
 }
 
+.hover-label {
+  font-weight:700;
+  fill:#000;
+  pointer-events:none;
+}
+
+.hover-label-bg {
+  fill:white;
+  opacity:0.95;
+  pointer-events:none;
+}
 
 </style>
 </head>
@@ -221,10 +231,42 @@ svg:hover .hint-label {
   <div id="container"></div>
 
   <aside id="info">
-    <h1>Radial Map</h1>
+    <h1>Tech Radial Map</h1>
     <p>
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-      Praesent vitae eros eget tellus tristique bibendum. 
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Praesent vitae eros eget tellus tristique bibendum.
+      Donec rutrum sed sem quis venenatis. Proin viverra risus a eros volutpat tempor.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Praesent vitae eros eget tellus tristique bibendum.
+      Donec rutrum sed sem quis venenatis. Proin viverra risus a eros volutpat tempor.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Praesent vitae eros eget tellus tristique bibendum.
+      Donec rutrum sed sem quis venenatis. Proin viverra risus a eros volutpat tempor.
+    </p>
+    <h2>Tech Radial Map</h2>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Praesent vitae eros eget tellus tristique bibendum.
+      Donec rutrum sed sem quis venenatis. Proin viverra risus a eros volutpat tempor.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Praesent vitae eros eget tellus tristique bibendum.
+      Donec rutrum sed sem quis venenatis. Proin viverra risus a eros volutpat tempor.
+    </p>
+    <h3>Tech Radial Map</h3>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Praesent vitae eros eget tellus tristique bibendum.
+      Donec rutrum sed sem quis venenatis. Proin viverra risus a eros volutpat tempor.
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Praesent vitae eros eget tellus tristique bibendum.
       Donec rutrum sed sem quis venenatis. Proin viverra risus a eros volutpat tempor.
     </p>
   </aside>
@@ -639,9 +681,6 @@ function placeInCell(cellId, item) {
 }
 
 
-
-
-
 function itemHref(item) {
   // placeholder canonical URL
   return `/item/${encodeURIComponent(item.label.toLowerCase().replace(/\s+/g,'-'))}.html`;
@@ -670,13 +709,18 @@ function addItem(item) {
 
   group.__data = item;
 
+  let the_text = el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label]);
+
   group.append(
-    el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"}),
-    el("text",{x:p.x+10,y:p.y+4,class:"dot-label"},[label])
+    the_text,
+    el("circle",{cx:p.x,cy:p.y,r:6,class:"dot"})
   );
 
   link.append(group);
   svg.append(link);
+
+  link.addEventListener("mouseenter",()=>showHoverLabel(link,the_text));
+  link.addEventListener("mouseleave",()=>hideHoverLabel(link));
 }
 
 function gridToChunkCartesian(cellId, gx, gy, grid, width, height){
@@ -861,6 +905,7 @@ const hintText = el("text",{
   "dominant-baseline":"hanging"
 });
 
+// This section manages the text about expanding/collapsing the radial maps
 uiLayer.append(hintText);
 
 function placeHint() {
@@ -1026,6 +1071,41 @@ svg.addEventListener("click", (ev) => {
     document.body.classList.toggle("map-expanded");
 });
 
+const hoverLayer = el("g",{class:"hover-layer"});
+svg.append(hoverLayer);
+
+
+function showHoverLabel(link, textEl){
+
+  const clone = textEl.cloneNode(true);
+  clone.classList.add("hover-label");
+
+  const bbox = textEl.getBBox();
+
+  const bg = el("rect",{
+    x:bbox.x-4,
+    y:bbox.y-2,
+    width:bbox.width+8,
+    height:bbox.height+4,
+    rx:3,
+    class:"hover-label-bg"
+  });
+
+  const g = el("g",{});
+  g.append(bg,clone);
+
+  hoverLayer.replaceChildren(g);
+
+  link._hoverProxy = g;
+}
+
+
+function hideHoverLabel(link){
+  if(link._hoverProxy){
+    link._hoverProxy.remove();
+    link._hoverProxy=null;
+  }
+}
 
 window.addEventListener("keydown", e=>{
   if(e.key==="Escape") {
@@ -1036,12 +1116,10 @@ window.addEventListener("keydown", e=>{
 });
 
 hooks.onItem = (s,r,item)=>{
-  console.log("ITEM",s,r,item);
   return false;   // allow navigation
 };
 
 hooks.onChunk = (segment,ring)=>{
-  console.log("CHUNK",segment,ring);
   renderChunkOverlay(segment,ring);
   return true;
 };
