@@ -9,7 +9,7 @@
     margin: 0;
     font-family: system-ui, sans-serif;
     background: #ffffff;
-    color: #ddd;
+    color: #222;
     display: flex;
     flex-direction: column;
     align-items: centre;
@@ -149,6 +149,37 @@ body.map-expanded #container svg {
 svg:hover .hint-label {
   opacity: 1;
 }
+
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+#overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+}
+
+#overlay-panel {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  background: white;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+#overlay-svg {
+  width: 700px;
+  height: 500px;
+}
+
+
 </style>
 </head>
 
@@ -641,6 +672,97 @@ function addItem(item) {
   svg.append(link);
 }
 
+function gridToChunkCartesian(cellId, gx, gy, grid, width, height){
+
+  const padding = 40;
+
+  const usableW = width - padding*2;
+  const usableH = height - padding*2;
+
+  const cellW = usableW / grid;
+  const cellH = usableH / grid;
+
+  const flippedY = (grid - 1) - gy;
+
+  return {
+    x: padding + gx*cellW + cellW/2,
+    y: padding + flippedY*cellH + cellH/2
+  };
+}
+
+function renderChunkOverlay(segmentLabel, ringLabel){
+
+  const defs = document.querySelector("svg defs");
+  overlaySvg.append(defs.cloneNode(true));
+
+  overlay.hidden = false;
+
+  document.getElementById("overlay-title").textContent =
+    `${segmentLabel} > ${ringLabel}`;
+
+
+  const width = 700;
+  const height = 500;
+
+  overlaySvg.setAttribute("viewBox",`0 0 ${width} ${height}`);
+
+  // find matching cellId
+  const segIndex = segment_labels.indexOf(segmentLabel);
+  const ringIndex = ring_labels.indexOf(ringLabel);
+
+  const cellId = letters[segIndex] + (ringIndex+1);
+
+
+  overlaySvg.append(
+    el("rect",{
+      x:0,y:0,width:width,height:height,
+      fill:`url(#chunkGrad-${segIndex}-${ringIndex})`
+    })
+  );
+
+  // draw grid
+  const gridGroup = el("g",{stroke:"#ddd","stroke-width":1,fill:"none"});
+  overlaySvg.append(gridGroup);
+
+  const GRID = 10;
+  const padding = 40;
+  const usableW = width - padding*2;
+  const usableH = height - padding*2;
+
+  for(let i=0;i<=GRID;i++){
+    const x = padding + usableW*i/GRID;
+    const y = padding + usableH*i/GRID;
+
+    gridGroup.append(
+      el("line",{x1:x,y1:padding,x2:x,y2:height-padding}),
+      el("line",{x1:padding,y1:y,x2:width-padding,y2:y})
+    );
+  }
+
+  // draw items
+  const items = occupancy[cellId];
+  if(!items) return;
+
+  items.forEach((item,key)=>{
+    const [gx,gy] = key.split(",").map(Number);
+    const p = gridToChunkCartesian(cellId,gx,gy,GRID,width,height);
+
+    const link = el("a",{href:item.href ?? itemHref(item)});
+
+    link.append(
+      el("circle",{cx:p.x,cy:p.y,r:5,class:"dot"}),
+      el("text",{
+        x:p.x+8,y:p.y+4,
+        transform:`rotate(-22 ${p.x+8} ${p.y+4})`,
+        class:"dot-label"
+      },[item.label])
+    );
+
+    overlaySvg.append(link);
+  });
+}
+
+
 
 
 const GRID = 7;
@@ -783,11 +905,28 @@ for (let s=0; s<CONFIG.segments; s++) {
   );
 }
 
-
 drawRingLabels(svg, ring_labels);
 drawSegmentLabels(svg, segment_labels);
 
 ITEMS.forEach(addItem);
+
+const overlay = document.getElementById("overlay");
+const overlaySvg = document.getElementById("overlay-svg");
+
+document.getElementById("overlay-backdrop")
+  .addEventListener("click", closeOverlay);
+
+// Duplicate listener
+// window.addEventListener("keydown", e=>{
+//   if(e.key==="Escape") closeOverlay();
+// });
+
+function closeOverlay(){
+  overlay.hidden = true;
+  overlaySvg.replaceChildren();
+}
+
+
 
 svg.addEventListener("click", (ev) => {
 
@@ -840,6 +979,7 @@ window.addEventListener("keydown", e=>{
   if(e.key==="Escape") {
     document.body.classList.remove("map-expanded");
     updateHint();
+    closeOverlay();
   }
 });
 
@@ -848,10 +988,17 @@ hooks.onItem = (s,r,item)=>{
   return false;   // allow navigation
 };
 
-hooks.onChunk = (s,r)=>{
-  console.log("CHUNK",s,r);
-  return true;    // prevent scroll -> future popup
+// hooks.onChunk = (s,r)=>{
+//   console.log("CHUNK",s,r);
+//   return true;    // prevent scroll -> future popup
+// };
+
+hooks.onChunk = (segment,ring)=>{
+  console.log("CHUNK",segment,ring);
+  renderChunkOverlay(segment,ring);
+  return true;
 };
+
 
 hooks.onSegment = s=>{
   console.log("SEGMENT",s);
@@ -859,6 +1006,14 @@ hooks.onSegment = s=>{
 };
 
 </script>
+
+<div id="overlay" hidden>
+  <div id="overlay-backdrop"></div>
+  <div id="overlay-panel">
+    <h2 id="overlay-title"></h2>
+    <svg id="overlay-svg"></svg>
+  </div>
+</div>
 </body>
 </html>
 
