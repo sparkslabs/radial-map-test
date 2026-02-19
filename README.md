@@ -99,7 +99,7 @@ Just load up in a browser and this should work for you.
 
 ### Broken remote links
 
-The links into the EVERSE tech radar are currently broken - this is because that site is under active development!
+The links into the EVERSE tech radar are currently broken - this is because that site is under active development! (NB, this is a good thing about TR and unfortunate for this demo)
 
 ### Status: This code is *sketch quality*
 
