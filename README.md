@@ -49,6 +49,7 @@ Focusses on look and feel for exploring some data. This doesn't tell you if it's
   * You can also click on a segment name and see all the tools (labels) at a glance there for a given segment - with chunks in order and tools in with the same placement.
   * The chunk and segment zoom work whether the main radial map is zoomed or not.
 
+* Looks reasonable both at 1920x1080, but also lower res displays - like 1280x720
 
 Is this good ? No. It's a band-aid at best. The crowding in the middle, leading back to minesweeper interface demonstrates the interface style is a bad idea. Flipping to a Cartesian map rather than radial would be relatively trivial with this, since it'd just be re-rendering all the chunks. 
 
@@ -95,6 +96,10 @@ Highlighting this does still leave a minesweeper problem near centre:
 Just load up in a browser and this should work for you.
 
 ## Caveats
+
+### Broken remote links
+
+The links into the EVERSE tech radar are currently broken - this is because that site is under active development!
 
 ### Status: This code is *sketch quality*
 
