@@ -1,5 +1,9 @@
 # Radial Map
 
+Live demo of the file on github:
+
+* <https://raw.githack.com/sparkslabs/radial-map-test/refs/heads/main/radial_map.html>
+
 ## Files:
 
 * radial_map.html - this is the main file. Warts and all
